@@ -13,15 +13,17 @@ use Sekeco\Iam\Filament\Resources\Users\Pages\EditUser;
 use Sekeco\Iam\Filament\Resources\Users\Pages\ListUsers;
 use Sekeco\Iam\Filament\Resources\Users\Pages\ViewUser;
 use Sekeco\Iam\Filament\Resources\Users\Schemas\UserForm;
-use UnitEnum;
 use Sekeco\Iam\Filament\Resources\Users\Schemas\UserInfolist;
 use Sekeco\Iam\Filament\Resources\Users\Tables\UsersTable;
+use UnitEnum;
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'IAM';
+    protected static ?string $tenantOwnershipRelationshipName = 'tenants';
+
+    protected static string|UnitEnum|null $navigationGroup = 'IAM';
 
     protected static ?int $navigationSort = 0;
 

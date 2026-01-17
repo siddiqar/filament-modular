@@ -28,15 +28,15 @@ class IamPlugin implements Plugin
             ->emailVerification()
             ->passwordReset()
             ->discoverResources(
-                in: __DIR__ . '/Filament/Resources',
+                in: __DIR__.'/Filament/Resources',
                 for: 'Sekeco\\Iam\\Filament\\Resources',
             )
             ->discoverPages(
-                in: __DIR__ . '/Filament/Pages',
+                in: __DIR__.'/Filament/Pages',
                 for: 'Sekeco\\Iam\\Filament\\Pages',
             )
             ->discoverWidgets(
-                in: __DIR__ . '/Filament/Widgets',
+                in: __DIR__.'/Filament/Widgets',
                 for: 'Sekeco\\Iam\\Filament\\Widgets',
             );
     }

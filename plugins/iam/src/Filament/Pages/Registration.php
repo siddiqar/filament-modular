@@ -2,8 +2,8 @@
 
 namespace Sekeco\Iam\Filament\Pages;
 
-use Filament\Schemas\Schema;
 use Filament\Auth\Pages\Register;
+use Filament\Schemas\Schema;
 
 class Registration extends Register
 {

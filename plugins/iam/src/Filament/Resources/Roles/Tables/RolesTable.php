@@ -2,12 +2,11 @@
 
 namespace Sekeco\Iam\Filament\Resources\Roles\Tables;
 
-use Dom\Text;
-use Filament\Tables\Table;
-use Filament\Actions\EditAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
 class RolesTable
 {
@@ -24,7 +23,7 @@ class RolesTable
                     ->badge()
                     ->sortable()
                     ->searchable(),
-                //total number of permissions
+                // total number of permissions
                 TextColumn::make('permissions_count')
                     ->label('Permissions')
                     ->counts('permissions')

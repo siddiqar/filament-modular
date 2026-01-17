@@ -19,7 +19,9 @@ class RoleResource extends Resource
 {
     protected static ?string $model = Role::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'IAM';
+    protected static bool $isScopedToTenant = false; // Roles are global, not scoped to tenants
+
+    protected static string|UnitEnum|null $navigationGroup = 'IAM';
 
     protected static ?int $navigationSort = 1;
 

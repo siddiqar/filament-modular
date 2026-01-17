@@ -30,5 +30,22 @@ class DatabaseSeeder extends Seeder
 
         // Assign super_admin role to default user
         $user->assignRole('super_admin');
+
+        // Create default tenant if tenancy is enabled
+        if (config('iam.tenant.enabled', false)) {
+            $tenantModel = config('iam.tenant.model', \Sekeco\Iam\Models\Tenant::class);
+            $tenant = $tenantModel::create([
+                'name' => 'Default Organization',
+                'slug' => 'default',
+            ]);
+
+            // Attach user as owner of the tenant
+            $user->tenants()->attach($tenant->id, [
+                'role' => \Sekeco\Iam\Enums\TenantRole::OWNER->value,
+                'invited_by' => null,
+                'invited_at' => null,
+                'joined_at' => now(),
+            ]);
+        }
     }
 }

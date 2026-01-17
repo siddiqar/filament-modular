@@ -22,6 +22,7 @@ return new class extends Migration
             $table->text('app_authentication_recovery_codes')->nullable();
             $table->boolean('has_email_authentication')->default(false);
             $table->rememberToken();
+            $table->softDeletes();
             $table->timestamps();
         });
 

@@ -2,9 +2,9 @@
 
 namespace Sekeco\Iam\Filament\Pages;
 
-use Filament\Schemas\Schema;
 use Filament\Auth\Pages\EditProfile;
 use Filament\Forms\Components\FileUpload;
+use Filament\Schemas\Schema;
 
 class Profile extends EditProfile
 {

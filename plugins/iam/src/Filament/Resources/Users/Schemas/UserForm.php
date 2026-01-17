@@ -3,14 +3,14 @@
 namespace Sekeco\Iam\Filament\Resources\Users\Schemas;
 
 use Filament\Forms\Components\CheckboxList;
-use Filament\Schemas\Schema;
-use Illuminate\Support\Facades\Hash;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
-use Filament\Forms\Components\FileUpload;
-use Illuminate\Validation\Rules\Password;
-use Filament\Forms\Components\DateTimePicker;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 
 class UserForm
 {
@@ -41,8 +41,8 @@ class UserForm
                         ->rule(Password::default())
                         ->showAllValidationMessages()
                         ->autocomplete('new-password')
-                        ->dehydrated(fn($state): bool => filled($state))
-                        ->dehydrateStateUsing(fn($state): string => Hash::make($state))
+                        ->dehydrated(fn ($state): bool => filled($state))
+                        ->dehydrateStateUsing(fn ($state): string => Hash::make($state))
                         ->live(debounce: 500)
                         ->same('passwordConfirmation'),
                     TextInput::make('passwordConfirmation')
@@ -52,7 +52,7 @@ class UserForm
                         ->autocomplete('new-password')
                         ->revealable(filament()->arePasswordsRevealable())
                         ->required()
-                        ->visible(fn(Get $get): bool => filled($get('password')))
+                        ->visible(fn (Get $get): bool => filled($get('password')))
                         ->dehydrated(false),
                     CheckboxList::make('roles')
                         ->relationship('roles', 'name')
