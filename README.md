@@ -1,59 +1,270 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Modular Laravel Application
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A modular Laravel application with multi-tenancy support, built with Filament v5 and a plugin-based architecture.
 
-## About Laravel
+## About This Project
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+This is a modular Laravel 12 application featuring:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Plugin-Based Architecture** - Extensible modular structure using Laravel packages
+- **Multi-Tenancy** - Organization-based tenancy with role-based access control
+- **Dual Panel System** - Separate admin and application panels
+- **IAM Plugin** - Complete identity and access management system
+- **Filament v5** - Modern admin panel framework with Livewire
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Tech Stack
 
-## Learning Laravel
+- **PHP** 8.4.15
+- **Laravel** 12.x
+- **Filament** 5.x
+- **Livewire** 4.x
+- **Spatie Permission** - Role and permission management
+- **PHPUnit** 11.x - Testing framework
+- **Laravel Pint** - Code formatting
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## Architecture
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Panel Structure
 
-## Laravel Sponsors
+The application uses two separate Filament panels with distinct purposes:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+#### Admin Panel (`/admin`)
+- **Purpose**: Global system administration
+- **Tenancy**: No tenant scoping
+- **Access**: Super Admin and Admin roles only
+- **Features**:
+  - User management
+  - Role management
+  - Organization (Tenant) management
+  - Global settings
 
-### Premium Partners
+#### App Panel (`/app/{tenant}`)
+- **Purpose**: Tenant-scoped application features
+- **Tenancy**: Fully tenant-aware
+- **Access**: All authenticated users with tenant membership
+- **Features**:
+  - Member management (within tenant context)
+  - Tenant-specific resources
+  - User profile
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### Plugin System
+
+Plugins are located in the `plugins/` directory and follow Laravel package conventions:
+
+#### IAM Plugin (`plugins/iam`)
+The Identity and Access Management plugin provides:
+
+- **Authentication**: User login and registration
+- **Multi-Tenancy**: Organization/tenant management
+- **Role Management**: Tenant-level roles (Owner, Admin, Member, Viewer)
+- **Invitations**: Email-based member invitations
+- **Permissions**: Fine-grained access control
+
+**Key Components**:
+- `InteractsWithIam` trait - Adds tenancy and IAM features to User model
+- `TenantInvitationService` - Handles member invitations and role management
+- Filament Resources for Admin panel (Users, Roles, Tenants)
+- Filament Resources for App panel (Members)
+
+## Getting Started
+
+### Prerequisites
+
+- PHP >= 8.4
+- Composer
+- Node.js & PNPM
+- MySQL/PostgreSQL
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd modular
+```
+
+2. Install PHP dependencies:
+```bash
+composer install
+```
+
+3. Install Node dependencies:
+```bash
+pnpm install
+```
+
+4. Set up environment:
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+5. Configure database in `.env`:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=modular
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+6. Run migrations and seeders:
+```bash
+php artisan migrate:fresh --seed
+```
+
+7. Build assets:
+```bash
+pnpm dev
+```
+
+8. Start development server:
+```bash
+php artisan serve
+```
+
+### Default Access
+
+After seeding, you can access:
+
+- **Admin Panel**: `http://localhost:8000/admin`
+- **App Panel**: `http://localhost:8000/app`
+
+Default credentials will be created by the seeder.
+
+## Development
+
+### Code Formatting
+
+This project uses Laravel Pint for code formatting:
+
+```bash
+# Format all files
+vendor/bin/pint
+
+# Format specific plugin
+vendor/bin/pint plugins/iam
+
+# Check formatting without fixing
+vendor/bin/pint --test
+```
+
+### Running Tests
+
+```bash
+# Run all tests
+php artisan test
+
+# Run specific test file
+php artisan test tests/Feature/ExampleTest.php
+
+# Run with coverage
+php artisan test --coverage
+```
+
+### Clearing Cache
+
+```bash
+# Clear all caches
+php artisan optimize:clear
+
+# Clear specific cache
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
+```
+
+## Multi-Tenancy
+
+### Tenant Roles
+
+The IAM plugin defines four tenant-level roles:
+
+- **Owner** - Full control over the organization
+- **Admin** - Can manage members and settings
+- **Member** - Standard access to tenant resources
+- **Viewer** - Read-only access
+
+### Managing Tenants
+
+**In Admin Panel** (`/admin/tenants`):
+- Create new organizations
+- Edit organization details
+- Manage all organization members
+- Delete organizations
+
+**In App Panel** (`/app/{tenant}/members`):
+- Invite new members (Owner/Admin only)
+- Update member roles (Owner/Admin only)
+- Remove members (Owner/Admin only)
+- View member list
+
+### Permission Checks
+
+The `InteractsWithIam` trait provides helper methods:
+
+```php
+// Check if user can manage members in a tenant
+$user->canManageMembersInTenant($tenant);
+
+// Check if user is owner of a tenant
+$user->isOwnerOfTenant($tenant);
+
+// Get user's role in a tenant
+$role = $user->getRoleInTenant($tenant);
+
+// Check specific role
+$user->hasRoleInTenant($tenant, TenantRole::ADMIN->value);
+```
+
+## Project Structure
+
+```
+.
+├── app/                          # Core application
+│   ├── Models/
+│   │   └── User.php             # User model with IAM traits
+│   └── Providers/
+├── plugins/                      # Modular plugins
+│   └── iam/                     # IAM plugin
+│       ├── config/              # Plugin configuration
+│       ├── database/            # Migrations, seeders, factories
+│       ├── resources/           # Views, translations
+│       ├── routes/              # Plugin routes
+│       ├── src/
+│       │   ├── Contracts/       # Interfaces
+│       │   ├── Enums/           # TenantRole enum
+│       │   ├── Filament/        # Filament resources
+│       │   ├── Models/          # Tenant, TenantInvitation
+│       │   ├── Services/        # Business logic
+│       │   └── Traits/          # InteractsWithIam
+│       └── tests/               # Plugin tests
+├── bootstrap/
+│   └── app.php                  # Panel configuration
+├── config/
+│   └── app-modules.php          # Plugin registration
+└── tests/                        # Application tests
+```
+
+## Key Files
+
+- [bootstrap/app.php](bootstrap/app.php) - Panel and middleware configuration
+- [config/app-modules.php](config/app-modules.php) - Plugin registration and discovery
+- [plugins/iam/src/Providers/IamServiceProvider.php](plugins/iam/src/Providers/IamServiceProvider.php) - IAM plugin service provider
+- [plugins/iam/src/Traits/InteractsWithIam.php](plugins/iam/src/Traits/InteractsWithIam.php) - Core IAM functionality
+- [plugins/iam/src/Services/TenantInvitationService.php](plugins/iam/src/Services/TenantInvitationService.php) - Member invitation logic
 
 ## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+When contributing to this project:
 
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+1. Follow existing code conventions and structure
+2. Run `vendor/bin/pint` before committing
+3. Ensure all tests pass: `php artisan test`
+4. Update documentation for new features
+5. Check sibling files for patterns before creating new ones
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
