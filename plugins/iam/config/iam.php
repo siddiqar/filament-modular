@@ -27,17 +27,33 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Panel Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configure which Filament panels IAM should apply to:
+    | - admin_id: The GLOBAL admin panel (no tenancy, super_admin/admin only)
+    | - app_id: The APP panel (multitenant when tenant.enabled = true)
+    |
+    */
+    'panel' => [
+        'admin_id' => 'admin', // Global admin panel
+        'app_id' => 'app', // Multitenant app panel
+        'super_admin_roles' => ['super_admin'], // Roles that bypass all permissions
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Tenant Configuration
     |--------------------------------------------------------------------------
     |
-    | Configure multi-tenancy for your application. Set 'enabled' to false to
-    | completely disable tenant features. When disabled, users do NOT need to
-    | implement HasTenants interface, and tenant-related methods will return
-    | empty results. This is useful for single-organization applications.
+    | Configure multi-tenancy for your APP panel (not admin panel).
+    | Set 'enabled' to false to completely disable tenant features.
     |
-    | When enabled (true), users MUST implement HasTenants interface and the
-    | tenant model/display name can be customized (e.g., 'Organization',
-    | 'Team', 'Company').
+    | When disabled: Users do NOT need HasTenants interface, single-org mode
+    | When enabled: Only applies to 'app' panel, admin panel stays global
+    |
+    | IMPORTANT: Admin panel is ALWAYS global regardless of this setting.
+    | Only the App panel uses tenancy when enabled = true.
     |
     */
     'tenant' => [
@@ -53,7 +69,7 @@ return [
         ],
 
         // Tenant route configuration
-        'route_prefix' => null, // e.g., 'team' makes URLs like /admin/team/{tenant}
+        'route_prefix' => null, // e.g., 'team' makes URLs like /app/team/{tenant}
         'domain' => null, // e.g., '{tenant}.example.com' for subdomain routing
     ],
 
@@ -84,22 +100,16 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Panel Configuration
+    | Access Control
     |--------------------------------------------------------------------------
     |
-    | Configure the Filament admin panel that uses IAM features.
+    | Configure access control for the admin panel:
+    | - admin_panel_roles: Only these roles can access the GLOBAL admin panel
+    | - allowed_email_domains: Email domain whitelist (fallback if no roles)
     |
     */
-    'panel' => [
-        'id' => 'admin',
-
-        // Super admin roles that bypass all permission checks
-        'super_admin_roles' => ['super_admin'],
-
-        // Roles allowed to access the panel
-        'allowed_roles' => ['admin', 'super_admin'],
-
-        // Email domains allowed to access the panel (fallback if no roles)
+    'access_control' => [
+        'admin_panel_roles' => ['super_admin', 'admin'],
         'allowed_email_domains' => ['example.com'],
     ],
 

@@ -6,7 +6,6 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
-use Sekeco\Iam\Filament\Resources\TenantMembers\Pages\InviteMember;
 use Sekeco\Iam\Filament\Resources\TenantMembers\Pages\ListMembers;
 use Sekeco\Iam\Filament\Resources\TenantMembers\Schemas\InvitationForm;
 use Sekeco\Iam\Filament\Resources\TenantMembers\Tables\MembersTable;
@@ -16,7 +15,9 @@ class TenantMemberResource extends Resource
 {
     protected static ?string $model = null; // We don't use a model directly, we use the User model via tenant relationship
 
-    protected static bool $isScopedToTenant = false; // This resource manages members, not scoped to tenant
+    // Admin panel resource - shows ALL tenant members across ALL tenants
+    // Super admins can see and manage members from any tenant
+    protected static bool $isScopedToTenant = false;
 
     protected static string|UnitEnum|null $navigationGroup = 'IAM';
 
@@ -24,11 +25,11 @@ class TenantMemberResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-user-group';
 
-    protected static ?string $navigationLabel = 'Members';
+    protected static ?string $navigationLabel = 'All Tenant Members';
 
-    protected static ?string $modelLabel = 'Member';
+    protected static ?string $modelLabel = 'Tenant Member';
 
-    protected static ?string $pluralModelLabel = 'Members';
+    protected static ?string $pluralModelLabel = 'Tenant Members';
 
     public static function form(Schema $schema): Schema
     {
@@ -44,7 +45,7 @@ class TenantMemberResource extends Resource
     {
         return [
             'index' => ListMembers::route('/'),
-            'invite' => InviteMember::route('/invite'),
+            // No invite page in admin panel - use TenantResource relation manager instead
         ];
     }
 

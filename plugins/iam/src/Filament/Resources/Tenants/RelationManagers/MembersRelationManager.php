@@ -14,6 +14,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 use Sekeco\Iam\Enums\TenantRole;
 use Sekeco\Iam\Services\TenantInvitationService;
 
@@ -80,18 +81,18 @@ class MembersRelationManager extends RelationManager
                         TenantRole::MEMBER => 'success',
                         TenantRole::VIEWER => 'gray',
                     })
-                    ->sortable(),
+                    ->sortable(false),
 
                 TextColumn::make('pivot.joined_at')
                     ->label('Joined')
                     ->dateTime()
-                    ->sortable(),
+                    ->sortable(false),
             ])
             ->headerActions([
                 Action::make('invite')
                     ->label('Invite Member')
                     ->icon(Heroicon::PaperAirplane)
-                    ->form([
+                    ->schema([
                         TextInput::make('email')
                             ->label('Email Address')
                             ->email()
@@ -135,19 +136,19 @@ class MembersRelationManager extends RelationManager
                         }
                     })
                     ->visible(function () {
-                        /** @phpstan-ignore-next-line */
-                        $currentUser = auth()->user();
+                        /** @var \App\Models\User|null $currentUser */
+                        $currentUser = Auth::user();
                         $tenant = $this->getOwnerRecord();
 
                         return $currentUser && $currentUser->canManageMembersInTenant($tenant);
                     }),
             ])
-            ->actions([
+            ->recordActions([
                 ActionGroup::make([
                     Action::make('updateRole')
                         ->label('Update Role')
                         ->icon(Heroicon::PencilSquare)
-                        ->form([
+                        ->schema([
                             Select::make('role')
                                 ->label('Role')
                                 ->options(TenantRole::class)
@@ -175,8 +176,8 @@ class MembersRelationManager extends RelationManager
                             }
                         })
                         ->visible(function ($record) {
-                            /** @phpstan-ignore-next-line */
-                            $currentUser = auth()->user();
+                            /** @var \App\Models\User|null $currentUser */
+                            $currentUser = Auth::user();
                             $tenant = $this->getOwnerRecord();
 
                             return $currentUser && $currentUser->canManageMembersInTenant($tenant);
@@ -207,15 +208,14 @@ class MembersRelationManager extends RelationManager
                             }
                         })
                         ->visible(function ($record) {
-                            /** @phpstan-ignore-next-line */
-                            $currentUser = auth()->user();
+                            /** @var \App\Models\User|null $currentUser */
+                            $currentUser = Auth::user();
+                            $tenant = $this->getOwnerRecord();
 
                             // Don't allow removing self
                             if ($currentUser && $currentUser->id === $record->id) {
                                 return false;
                             }
-
-                            $tenant = $this->getOwnerRecord();
 
                             return $currentUser && $currentUser->canManageMembersInTenant($tenant);
                         }),

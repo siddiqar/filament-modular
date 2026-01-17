@@ -38,8 +38,8 @@ class TenantResource extends Resource
 
         // Simple pluralization
         return str_ends_with($label, 'y')
-            ? substr($label, 0, -1) . 'ies'
-            : $label . 's';
+            ? substr($label, 0, -1).'ies'
+            : $label.'s';
     }
 
     public static function form(Schema $schema): Schema

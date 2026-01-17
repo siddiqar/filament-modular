@@ -21,17 +21,52 @@ class IamServiceProvider extends ServiceProvider
 
         // Configure Filament panel with IAM plugin
         Panel::configureUsing(function (Panel $panel): void {
-            $panelId = (string) config('iam.panel.id', 'admin');
+            $adminPanelId = (string) config('iam.panel.admin_id', 'admin');
+            $appPanelId = (string) config('iam.panel.app_id', 'app');
 
-            if ($panel->getId() !== $panelId) {
+            // Configure Admin Panel (always global, no tenancy)
+            if ($panel->getId() === $adminPanelId) {
+                // Admin panel: manually register only global resources (Users, Roles, Tenants)
+                // DO NOT use IamPlugin to avoid auto-discovering tenant-specific resources
+                $panel
+                    ->login()
+                    ->registration(\Sekeco\Iam\Filament\Pages\Registration::class)
+                    ->profile(page: \Sekeco\Iam\Filament\Pages\Profile::class, isSimple: false)
+                    ->emailVerification()
+                    ->passwordReset()
+                    // Only discover Users, Roles, and Tenants for admin panel (global resources)
+                    ->discoverResources(
+                        in: __DIR__.'/../../src/Filament/Resources/Users',
+                        for: 'Sekeco\\Iam\\Filament\\Resources\\Users',
+                    )
+                    ->discoverResources(
+                        in: __DIR__.'/../../src/Filament/Resources/Roles',
+                        for: 'Sekeco\\Iam\\Filament\\Resources\\Roles',
+                    )
+                    ->discoverResources(
+                        in: __DIR__.'/../../src/Filament/Resources/Tenants',
+                        for: 'Sekeco\\Iam\\Filament\\Resources\\Tenants',
+                    );
+
+                // Admin panel is GLOBAL - no tenancy configuration
                 return;
             }
 
-            // Register IAM plugin
-            $panel->plugin(IamPlugin::make());
+            // Configure App Panel (multitenant if enabled)
+            if ($panel->getId() === $appPanelId && config('iam.tenant.enabled', false)) {
+                // App panel: manually register tenant-specific resources (Members only)
+                $panel
+                    ->login()
+                    ->registration(\Sekeco\Iam\Filament\Pages\Registration::class)
+                    ->emailVerification()
+                    ->passwordReset()
+                    // Only discover Members for app panel (tenant-scoped)
+                    ->discoverResources(
+                        in: __DIR__.'/../../src/Filament/Resources/Members',
+                        for: 'Sekeco\\Iam\\Filament\\Resources\\Members',
+                    );
 
-            // Configure tenancy if enabled
-            if (config('iam.tenant.enabled', false)) {
+                // Configure tenancy for app panel
                 $tenantModel = config('iam.tenant.model', \Sekeco\Iam\Models\Tenant::class);
                 $slugAttribute = config('iam.tenant.slug_attribute', 'slug');
                 $routePrefix = config('iam.tenant.route_prefix');
