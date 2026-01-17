@@ -1,0 +1,27 @@
+{
+	"name": "sekeco/iam",
+	"description": "",
+	"type": "library",
+	"version": "1.0",
+	"license": "proprietary",
+	"require": {
+		"filament/filament": "^5.0",
+		"spatie/laravel-permission": "^6.0"
+	},
+	"autoload": {
+		"psr-4": {
+			"Sekeco\\Iam\\": "src/",
+			"Sekeco\\Iam\\Tests\\": "tests/",
+			"Sekeco\\Iam\\Database\\Factories\\": "database/factories/",
+			"Sekeco\\Iam\\Database\\Seeders\\": "database/seeders/"
+		}
+	},
+	"minimum-stability": "stable",
+	"extra": {
+		"laravel": {
+			"providers": [
+				"Sekeco\\Iam\\Providers\\IamServiceProvider"
+			]
+		}
+	}
+}
